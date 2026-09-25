@@ -4,11 +4,21 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  ActivityIndicator,
+  Button,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
+import { useIoT } from '../../context/IoTContext';
 
 export default function SensorsScreen() {
+  const {
+    sensors,
+    isLoadingSensors,
+    sensorError,
+    refreshSensors,
+  } = useIoT();
+
   return (
     <ScrollView style={styles.container}>
 
@@ -21,8 +31,28 @@ export default function SensorsScreen() {
         Monitor your environment
       </Text>
 
+      {sensorError && (
+        <View style={styles.feedback}>
+          <Text style={styles.error}>{sensorError}</Text>
+          <Button title="Retry" onPress={() => void refreshSensors()} />
+        </View>
+      )}
+
+      <Button
+        title={isLoadingSensors ? 'Refreshing Sensors...' : 'Refresh Sensors'}
+        onPress={() => void refreshSensors()}
+        disabled={isLoadingSensors}
+      />
+
+      {isLoadingSensors && (
+        <View style={styles.loading}>
+          <ActivityIndicator />
+          <Text>Refreshing Sensors...</Text>
+        </View>
+      )}
+
       {/* Temperature */}
-      <View style={styles.sensorCard}>
+      {sensors && <View style={styles.sensorCard}>
 
         <View style={styles.sensorHeader}>
 
@@ -38,17 +68,17 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          28°C
+          {sensors.temperature}°C
         </Text>
 
         <Text style={styles.sensorDescription}>
           Current room temperature
         </Text>
 
-      </View>
+      </View>}
 
       {/* Humidity */}
-      <View style={styles.sensorCard}>
+      {sensors && <View style={styles.sensorCard}>
 
         <View style={styles.sensorHeader}>
 
@@ -64,17 +94,17 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          65%
+          {sensors.humidity}%
         </Text>
 
         <Text style={styles.sensorDescription}>
           Current relative humidity
         </Text>
 
-      </View>
+      </View>}
 
       {/* Light Level */}
-      <View style={styles.sensorCard}>
+      {sensors && <View style={styles.sensorCard}>
 
         <View style={styles.sensorHeader}>
 
@@ -90,14 +120,14 @@ export default function SensorsScreen() {
         </View>
 
         <Text style={styles.sensorValue}>
-          720 lux
+          {sensors.lightLevel} lux
         </Text>
 
         <Text style={styles.sensorDescription}>
           Current ambient light
         </Text>
 
-      </View>
+      </View>}
 
     </ScrollView>
   );
@@ -148,6 +178,21 @@ const styles = StyleSheet.create({
   sensorDescription: {
     fontSize: 13,
     marginTop: 5,
+  },
+
+  loading: {
+    alignItems: 'center',
+    gap: 8,
+    marginVertical: 24,
+  },
+
+  feedback: {
+    marginVertical: 12,
+    gap: 8,
+  },
+
+  error: {
+    color: '#b42318',
   },
 
 });

@@ -6,6 +6,8 @@ import {
   StyleSheet,
   ScrollView,
   Switch,
+  ActivityIndicator,
+  Button,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
@@ -16,6 +18,11 @@ export default function DevicesScreen() {
 
   const {
     devices,
+    isLoadingDevices,
+    updatingDeviceId,
+    gatewayConnected,
+    deviceError,
+    loadDevices,
     toggleDevice,
   } = useIoT();
 
@@ -30,7 +37,23 @@ export default function DevicesScreen() {
         Control your connected devices
       </Text>
 
-      {devices.map((device) => (
+      {!gatewayConnected && <Text style={styles.error}>IoT Gateway is disconnected.</Text>}
+
+      {deviceError && (
+        <View style={styles.feedback}>
+          <Text style={styles.error}>{deviceError}</Text>
+          <Button title="Retry" onPress={() => void loadDevices()} />
+        </View>
+      )}
+
+      {isLoadingDevices && (
+        <View style={styles.loading}>
+          <ActivityIndicator />
+          <Text>Loading devices...</Text>
+        </View>
+      )}
+
+      {!isLoadingDevices && devices.map((device) => (
 
         <View
           key={device.id}
@@ -68,10 +91,11 @@ export default function DevicesScreen() {
 
           <Switch
             value={device.status}
-            onValueChange={(value) => {
-              toggleDevice(device.id, value);
-            }}
+            disabled={!gatewayConnected || updatingDeviceId === device.id}
+            onValueChange={(value) => void toggleDevice(device.id, value)}
           />
+
+          {updatingDeviceId === device.id && <Text style={styles.updating}>Syncing device...</Text>}
 
         </View>
 
@@ -141,6 +165,27 @@ const styles = StyleSheet.create({
   deviceState: {
     fontSize: 12,
     marginTop: 5,
+  },
+
+  loading: {
+    alignItems: 'center',
+    gap: 8,
+    marginVertical: 24,
+  },
+
+  feedback: {
+    marginBottom: 16,
+    gap: 8,
+  },
+
+  error: {
+    color: '#b42318',
+    marginBottom: 8,
+  },
+
+  updating: {
+    fontSize: 12,
+    marginLeft: 8,
   },
 
 });

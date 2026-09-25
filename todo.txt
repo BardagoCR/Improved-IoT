@@ -1,0 +1,199 @@
+Activity 6 — Create IoT Data Models
+Objective
+Create TypeScript models that describe the application's IoT data.
+Create:
+src/
+└── models/
+    └── IoTModels.ts
+Create Device
+type Device = {
+    id: number;
+    name: string;
+    type: string;
+    icon: keyof typeof Ionicons.glyphMap;
+    status: boolean;
+};
+Create SensorData
+type SensorData = {
+    temperature: number;
+    humidity: number;
+    lightLevel: number;
+};
+You should also create sample devices.
+Example:
+Living Room Light
+Bedroom Fan
+Front Door Lock
+
+
+Checkpoints:
+created a Device type.
+Each device has an id.
+Each device has a name.
+Each device has a type.
+Each device has an icon.
+Each device has a status.
+status is a Boolean.
+created a SensorData type.
+Sensor data contains temperature.
+Sensor data contains humidity.
+Sensor data contains light level.
+created sample IoT devices.
+
+
+Activity 7 — Create the IoT Context
+Objective
+Use React Context to share IoT information between screens.
+Create:
+src/
+└── context/
+    └── IotContext.tsx
+You must create:
+IoTProvider
+useIoT()
+The context should manage:
+Devices
+Sensor data
+Gateway connection
+Device status
+Loading states
+Error states
+Important Concept
+You should understand:
+Dashboard
+     │
+Devices ───► IoTContext ◄─── Sensors
+     │
+Settings
+Instead of keeping separate device states inside every screen.
+
+
+Checkpoints:
+My devices appear on the screen.
+Each device displays its name.
+Each device displays its type.
+Each device displays an icon.
+Each device has an ON/OFF switch.
+The switch reflects the current device status.
+Turning the switch ON changes the status to ON.
+Turning the switch OFF changes the status to OFF.
+The displayed status changes immediately.
+Activity 8 — Build the Device Management Feature
+Objective
+Display and control IoT devices.
+The Devices screen should display:
+Device icon
+Device name
+Device type
+ON/OFF status
+Switch
+Example:
+┌──────────────────────────────┐
+│ 💡  Living Room Light        │
+│     Smart Light        ON    │
+│                         ◉    │
+└──────────────────────────────┘
+Requirements
+The switch must:
+Show the current device status.
+Change the status when switched.
+Use useState or Context state.
+Display Updating... while a device command is processing.
+Be disabled when the gateway is disconnected.
+
+Activity 9 — Build the Sensor Monitoring Feature
+Objective
+Display simulated IoT sensor readings.
+The Sensors screen should display:
+Temperature
+🌡 Temperature
+28 °C
+Humidity
+💧 Humidity
+65 %
+Light Level
+☀ Light Level
+720 lux
+Students should implement:
+Refresh Sensors
+The application should display a loading state while retrieving the data.
+
+Checkpoints:
+Temperature is displayed.
+Humidity is displayed.
+Light level is displayed.
+A Refresh Sensors button exists.
+Clicking Refresh Sensors starts a loading state.
+The button indicates that data is being refreshed.
+New sensor values are displayed after the request completes.
+The application does not freeze while waiting.
+
+
+Activity 10 — Create the IoT Service
+Objective
+Simulate communication with an IoT API.
+Create:
+src/
+└── services/
+    └── IoTService.ts
+Students must implement:
+getSensorData()
+getDevices()
+updateDeviceStatus()
+Requirements
+The service should:
+Use async/await.
+Simulate network delays.
+Return sensor data.
+Return devices.
+Update device status.
+Simulate possible failures.
+Example:
+await delay(1500);
+Students should understand that the service represents communication with an actual IoT backend.
+Mobile App
+    │
+    ▼
+IoTService
+    │
+    ▼
+Simulated IoT API
+
+
+Checkpoints:
+IoTService.ts exists.
+getSensorData() works.
+getDevices() works.
+updateDeviceStatus() works.
+The functions use asynchronous operations.
+A simulated delay is present.
+The screens do not directly generate the IoT data.
+The Context communicates with the service.
+
+
+Activity 11 — Implement Loading and Error Handling
+Objective
+Make the application behave like a real IoT application.
+Students must handle:
+Sensor Loading
+Refreshing Sensors...
+Device Loading
+Loading devices...
+Sensor Error
+Unable to retrieve sensor data.
+Device Error
+Unable to update Bedroom Fan.
+Gateway Disconnection
+IoT Gateway is disconnected.
+Retry
+Provide a:
+Retry
+button when appropriate.
+Checkpoints:
+Sensor loading is displayed while retrieving data.
+Device loading is displayed while retrieving devices.
+Sensor errors can be displayed.
+Device errors can be displayed.
+A retry option is available when appropriate.
+The user receives feedback when an operation fails.
+The application does not crash when an IoT request fails.

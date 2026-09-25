@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, Switch } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIoT } from '../../context/IoTContext';
@@ -15,6 +15,8 @@ export default function DashboardScreen() {
 
     const { devices, 
         sensors, 
+        updatingDeviceId,
+        gatewayConnected,
         toggleDevice } = useIoT();
 
     return (
@@ -33,7 +35,7 @@ export default function DashboardScreen() {
                 <View style={styles.sensorCard}>
                     <View style={styles.sensorHeader}>
                         <Ionicons
-                            name="water-outline"
+                            name="thermometer-outline"
                             size={22}
                         />
 
@@ -43,7 +45,7 @@ export default function DashboardScreen() {
                     </View>
 
                     <Text style={styles.sensorValue}>
-                        {sensors.temperature}°C
+                        {sensors ? `${sensors.temperature}°C` : 'Loading...'}
                     </Text>
                 </View>
 
@@ -60,10 +62,27 @@ export default function DashboardScreen() {
                     </View>
 
                     <Text style={styles.sensorValue}>
-                        {sensors.humidity}%
+                        {sensors ? `${sensors.humidity}%` : 'Loading...'}
                     </Text>
                 </View>
 
+            </View>
+
+            <View style={[styles.sensorCard, styles.lightSensorCard]}>
+                <View style={styles.sensorHeader}>
+                    <Ionicons
+                        name="sunny-outline"
+                        size={22}
+                    />
+
+                    <Text style={styles.sensorLabel}>
+                        Light Level
+                    </Text>
+                </View>
+
+                <Text style={styles.sensorValue}>
+                    {sensors ? `${sensors.lightLevel} lux` : 'Loading...'}
+                </Text>
             </View>
 
             <Text style={styles.sectionTitle}>
@@ -128,9 +147,8 @@ export default function DashboardScreen() {
 
                     <Switch
                         value={device.status}
-                        onValueChange={(value) => {
-                            toggleDevice(device.id, value);
-                        }}
+                        disabled={!gatewayConnected || updatingDeviceId === device.id}
+                        onValueChange={(value) => void toggleDevice(device.id, value)}
                     />
 
                 </View>
@@ -168,6 +186,11 @@ const styles = StyleSheet.create({
         padding: 20,
         borderRadius: 12,
         backgroundColor: '#eeeeee',
+    },
+
+    lightSensorCard: {
+        flex: 0,
+        marginTop: 12,
     },
 
     sensorLabel: {
